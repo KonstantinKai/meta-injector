@@ -1,0 +1,59 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/meta-injector-react/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:rollup",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/meta-injector-react",
+        "tsConfig": "packages/meta-injector-react/tsconfig.lib.json",
+        "project": "packages/meta-injector-react/package.json",
+        "entryFile": "packages/meta-injector-react/src/index.ts",
+        "external": [
+          "react/jsx-runtime"
+        ],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "compiler": "babel",
+        "deleteOutputPath": true,
+        "assets": [
+          {
+            "glob": "packages/meta-injector-react/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "rollupConfig": "dist/out-tsc/tools/configs/rollup-minify.js"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "packages/meta-injector-react/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/packages/meta-injector-react"
+      ],
+      "options": {
+        "jestConfig": "packages/meta-injector-react/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
