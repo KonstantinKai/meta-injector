@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FactoryType } from './createFactory';
+import { FactoryType, createFactory } from './createFactory';
 import { createMetaInjector } from './createMetaInjector';
 import { createMeta } from './createMeta';
 
@@ -194,5 +194,35 @@ describe('MetaInjector', () => {
 
     expect(fn1).toBeCalledTimes(2);
     expect(fn2).toBeCalledTimes(2);
+  });
+
+  it('test #6 (cannot modify objects)', () => {
+    const injector = createMetaInjector();
+    const meta = injector.createMeta();
+    const factory = createFactory(FactoryType.Instant, () => 'str1');
+
+    expect(() => {
+      (injector as any).my_new_property = 'some value';
+    }).toThrow();
+
+    expect(() => {
+      (injector as any).createMeta = () => 'some value';
+    }).toThrow();
+
+    expect(() => {
+      (meta as any).push('some value');
+    }).toThrow();
+
+    expect(() => {
+      (meta as any)[0] = '1';
+    }).toThrow();
+
+    expect(() => {
+      (factory as any).push('some value');
+    }).toThrow();
+
+    expect(() => {
+      (factory as any)[0] = '1';
+    }).toThrow();
   });
 });

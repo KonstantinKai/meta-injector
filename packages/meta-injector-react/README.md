@@ -6,7 +6,7 @@
 
 Do you like the package? Buy me a coffee :)
 
-<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/uploadcare_client/blob/master/assets/button.png?raw=true" alt="Buy Me A Coffee"></a>
+<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
 
 ## Installation
 

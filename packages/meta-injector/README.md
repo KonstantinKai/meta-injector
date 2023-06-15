@@ -1,15 +1,15 @@
 # ![meta injector logo](../../assets/meta-injector.png)
 
-Lightweight, Typescript friendly, easy to use and understand service locator implementation.
+Lightweight, Typescript friendly, easy to use and understand service locator implementation. **(just 800 B gzipped)**
 
 ---
 
 Do you like the package? Buy me a coffee :)
 
-<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/uploadcare_client/blob/master/assets/button.png?raw=true" alt="Buy Me A Coffee"></a>
+<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
 
 No constructors binding, your service can be as anything that javascript allows (plain objects, functions, primitives, classes, .etc).
-Just create simple `Meta<Type, OptionalCreatorParameters>` description of your service, bind this `meta` to the `Creator<Type>` and use it anywhere.
+Just create simple `Meta<Type, OptionalCreatorParameters>` description of your service, bind this `meta` to the `Creator<Type>` and use it anywhere. You don't need to remember service alias or service type anymore.
 
 This lib was created with respect of testability. You can override binded `meta` with another implementation of destination services for testing environment or production runtime (only if you known what are you doing) with ability of restoring original implementation.
 
@@ -17,7 +17,7 @@ This lib was created with respect of testability. You can override binded `meta`
 
 <!-- TODO: review -->
 
-Have a centralized place for application services registration.
+Have a centralized place for application services. No need to specify type of service implicitly, your service type holds `meta` descriptor.
 Since typescript `import type` feature was released and combining it with async `import()` feature of ES specification I decide to create dependency injection solution for projects I'm working with. For large application final code bundle size plays an important role. Less code faster start. `React` with `MobX` is my primary UI tools
 
 ## Installation
@@ -54,10 +54,12 @@ Create meta object. You can create meta objects in separate file related to the 
 import { injector } from './injector';
 import type { Feature1 } from './Feature1';
 
-export const feature1Meta = injector.createMeta<Feature1>();
+export const feature1Meta = injector.createMeta<Feature1>(
+  'descriptive name of service'
+);
 ```
 
-Bind meta with imlementation physicaly
+Bind meta with implementation physically
 
 ```ts
 // file: feature1Registration.ts
@@ -71,6 +73,20 @@ import { Feature1 } from './Feature1';
 // FactoryType.Instant - calls creator function only once until they will be unregistered
 // FactoryType.Factory - calls creator function every time when you access them by meta
 injector.register(feature1Meta, () => new Feature1());
+```
+
+Difference between `FactoryType.Instant` & `FactoryType.Lazy`:
+
+```ts
+const metaInstant = injector.createMeta<'Instant'>();
+const metaLazy = injector.createMeta<'Lazy'>();
+
+injector.register(metaInstant, () => 'Instant', FactoryType.Instant); // will call creator function immediately and store 'Instant' string in memory
+injector.register(metaLazy, () => 'Lazy', FactoryType.Lazy); // doesn't call creator function
+
+const [instantStr] = injector.retrieve(metaInstant); // returns previously created 'Instant' string
+const [lazyStr1] = injector.retrieve(metaLazy); // will call creator function and returns 'Lazy' string
+const [lazyStr2] = injector.retrieve(metaLazy); // doesn't call creator function and returns previously created 'Lazy' string
 ```
 
 Get access to this service in some code of your app
@@ -88,9 +104,88 @@ feature1.method1();
 feature1.method2();
 ```
 
+If you are using `FactoryType.Factory` and your service can accept arguments, no problem, you can do it while retrieving them
+
+```ts
+class Service1 {
+  constructor(public a: string, public b: number) {}
+}
+
+interface Service2 {
+  a: boolean;
+}
+function createService2(a: boolean): Service2 {
+  return { a };
+}
+
+const s1Meta = injector.createMeta<Service1, typeof Service1>('s1');
+const s2Meta = injector.createMeta<Service2, typeof createService2>('s2');
+
+injector.register(
+  s1Meta,
+  (...args) => new Service2(...args),
+  FactoryType.Factory
+);
+injector.register(
+  s2Meta,
+  (...args) => createService2(...args),
+  FactoryType.FactoryType
+);
+
+/// Now you can create your services every time with necessary parameters. All parameters are strong typed
+const [s1_1, s2_1] = injector.retrieve(
+  s1Meta.withParams('str1', 1),
+  s2Meta.withParams(true)
+);
+const [s1_2, s2_2] = injector.retrieve(
+  s1Meta.withParams('str2', 2),
+  s2Meta.withParams(false)
+);
+
+s1_1.a === 'str1';
+s1_1.b === 1;
+s1_2.a === 'str2';
+s1_2.b === 2;
+
+s2_1.a === true;
+s2_2.a === false;
+```
+
+If you need free some resources after service destroying, sure...
+
+```ts
+class Service {
+  subscribe(): void {
+    // Some code
+  }
+
+  unsubscribe(): void {
+    // Some code
+  }
+}
+
+const meta = injector.createMeta<Service>('s1');
+
+injector.register(
+  meta,
+  () => new Service(),
+  /**
+   * @param {Service | null} obj
+   *
+   * NOTE: `obj` can be `null` in case for `FactoryType.Lazy` or `FactoryType.Factory` if you call `unregister` before the `retrieve` method
+   */
+  (obj) => obj?.unsubscribe()
+);
+
+// A few moment later
+// ...
+// This method will call dispose function if they was specified
+injector.unregister(meta);
+```
+
 ## Testability
 
-To able to override existing bindings for abillity to test your code with mocked or overriden dependencies you should pass `true` parameter to the `MetaInjector` constructor. To do this you can use environment variables for example. Go to your app level `MetaInjector` instance and do the following
+To able to override existing bindings for ability to test your code with mocked or overridden dependencies you should pass `true` parameter to the `createMetaInjector` function. To do this you can use environment variables for example. Go to your app level `MetaInjector` instance and do the following
 
 ```ts
 // file: injector.ts
@@ -176,29 +271,5 @@ import type { BackendAPI } from './BackendAPI';
 
 import './appLogic1Registration';
 
-class MockedBackendAPI implements BackendAPI {
-  fetchThing1(param1: string): Promise<string[]> {
-    return Promise.resolve(['str1', 'str2', 'str3', 'str4']);
-  }
-}
-
-describe('app logic 1', () => {
-  before(() => {
-    // Override services.backendAPI with mocked implementation
-    injector.register(services.backendAPI, () => new MockedBackendAPI());
-  });
-
-  after(() => {
-    // Restore initial implementation of the service
-    injector.restore(services.backendAPI);
-  });
-
-  test('Should works correctly with list of strings', async () => {
-    const [appLogic1] = injector.retrieve(services.appLogic1);
-
-    await appLogic1.fetchThing1('param1');
-
-    expect(appLogic1.listOfString).toEqual(['str1', 'str2', 'str3', 'str4']);
-  });
-});
+class MockedBac
 ```
