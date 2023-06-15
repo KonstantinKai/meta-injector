@@ -1,23 +1,20 @@
 {
+  "name": "meta-injector-react",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/meta-injector-react/src",
   "projectType": "library",
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/meta-injector-react",
         "tsConfig": "packages/meta-injector-react/tsconfig.lib.json",
         "project": "packages/meta-injector-react/package.json",
         "entryFile": "packages/meta-injector-react/src/index.ts",
-        "external": [
-          "react/jsx-runtime"
-        ],
-        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "compiler": "babel",
         "deleteOutputPath": true,
         "assets": [
@@ -35,10 +32,8 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "packages/meta-injector-react/**/*.{ts,tsx,js,jsx}"
@@ -46,10 +41,8 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/meta-injector-react"
-      ],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/packages/meta-injector-react"],
       "options": {
         "jestConfig": "packages/meta-injector-react/jest.config.ts",
         "passWithNoTests": true

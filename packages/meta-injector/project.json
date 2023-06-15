@@ -1,10 +1,11 @@
 {
+  "name": "meta-injector",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/meta-injector/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/rollup:rollup",
       "dependsOn": ["rollup"],
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -30,22 +31,22 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/meta-injector/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/meta-injector"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/packages/meta-injector"],
       "options": {
         "jestConfig": "packages/meta-injector/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "rollup": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "npx tsc --build tools/tsconfig.tools.json"
       }

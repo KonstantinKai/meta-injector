@@ -15,6 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@internal/rvalue": ["packages/internal/rvalue/src/index.ts"],
+      "@internal/tmdb": ["packages/internal/tmdb/src/index.ts"],
       "@kdev/meta-injector": ["packages/meta-injector/src/index.ts"],
       "@kdev/meta-injector-react": ["packages/meta-injector-react/src/index.ts"]
     }

@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { FactoryType } from './createFactory';
-import { MetaInjector } from './MetaInjector';
-import { createMeta, Meta } from './createMeta';
+import { createMetaInjector } from './createMetaInjector';
+import { createMeta } from './createMeta';
 
 describe('MetaInjector', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   it('test #1 (register/retrieve flow)', () => {
-    const injector = new MetaInjector();
+    const injector = createMetaInjector();
 
     expect(() => injector.retrieve(createMeta(1, '1'))).toThrow(
       'Object with id@1 is not registered in MetaInjector'
@@ -29,7 +37,7 @@ describe('MetaInjector', () => {
     );
 
     expect(() => injector.retrieve(m1.withParams(1))).toThrow(
-      'Cannot use parameters with "Singleton" type'
+      'Cannot use parameters with "Instant" type'
     );
 
     expect(injector.retrieve(m1)).toEqual(['str1']);
@@ -52,8 +60,12 @@ describe('MetaInjector', () => {
       'Object with id@2 already registered in MetaInjector'
     );
 
+    expect(() =>
+      injector.register(injector.createMeta(), () => null, 99 as FactoryType)
+    ).toThrow('Cannot operate with type "99"');
+
     const cl3 = class {
-      constructor(public readonly a: number = 0, public readonly b?: number) { }
+      constructor(public readonly a: number = 0, public readonly b?: number) {}
     };
     const fn3 = jest.fn();
     const m3 = injector.createMeta<InstanceType<typeof cl3>, typeof cl3>();
@@ -90,7 +102,7 @@ describe('MetaInjector', () => {
   });
 
   it('test #3 (unregister flow)', () => {
-    const injector = new MetaInjector();
+    const injector = createMetaInjector();
 
     const fn1 = jest.fn();
     const m1 = injector.createMeta<string>();
@@ -108,6 +120,8 @@ describe('MetaInjector', () => {
     injector.unregister(m1);
     injector.unregister(m2, m3);
 
+    jest.runAllTicks();
+
     expect(fn1).toBeCalledTimes(1);
     expect(fn1).toBeCalledWith('str1');
 
@@ -116,9 +130,9 @@ describe('MetaInjector', () => {
     expect(() => injector.retrieve(m3)).toThrow();
   });
 
-  it('test #3 (allowOverriding/restore flow)', () => {
-    const injector1 = new MetaInjector();
-    const injector2 = new MetaInjector(true);
+  it('test #4 (allowOverriding/restore flow)', () => {
+    const injector1 = createMetaInjector();
+    const injector2 = createMetaInjector(true);
 
     const meta = injector1.createMeta<string>('9');
 
@@ -126,7 +140,7 @@ describe('MetaInjector', () => {
     expect(() => injector1.register(meta, () => 'str1')).toThrow();
     expect(injector1.retrieve(meta)).toEqual(['str1']);
     expect(() => injector1.restore(meta)).toThrow(
-      'You can use `restore` method only when `new MetaInjector(true)`'
+      'You can use `restore` method only when `createMetaInjector(true)`'
     );
 
     injector2.register(meta, () => 'str2');
@@ -149,8 +163,8 @@ describe('MetaInjector', () => {
     );
   });
 
-  it('test #4 (dispose with nullable object)', () => {
-    const injector = new MetaInjector();
+  it('test #5 (dispose with nullable object)', () => {
+    const injector = createMetaInjector();
 
     const fn1 = jest.fn();
     const fn2 = jest.fn();
@@ -161,6 +175,8 @@ describe('MetaInjector', () => {
 
     injector.unregister(meta1, meta2);
 
+    jest.runAllTicks();
+
     expect(fn1).toBeCalledWith(null);
     expect(fn2).toBeCalledWith(null);
 
@@ -170,6 +186,8 @@ describe('MetaInjector', () => {
     injector.retrieve(meta1, meta2);
 
     injector.unregister(meta1, meta2);
+
+    jest.runAllTicks();
 
     expect(fn1).toBeCalledWith('str1');
     expect(fn2).toBeCalledWith('str2');

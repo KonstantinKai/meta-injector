@@ -41,33 +41,29 @@ export type Factory<T, P> = readonly [
  * Main point for creating registered objects
  *
  * @typeParam T Type of service object
+ * @typeParam P Params of creator
  */
 export function createFactory<T, P>(
   type: FactoryType,
   creator: Creator<T, P>,
   disposer?: Disposer<T> | null
 ): Factory<T, P> {
+  assert(
+    [FactoryType.Instant, FactoryType.Lazy, FactoryType.Factory].includes(type),
+    `Cannot operate with type "${type}"`
+  );
+
   const effectiveDisposer = disposer ?? null;
 
-  let object =
-    type === FactoryType.Instant ? creator(...([] as never)) : null;
+  let object = type === FactoryType.Instant ? creator(...([] as never)) : null;
 
   return Object.freeze([
     (params: P) => {
       assert(
-        [
-          FactoryType.Instant,
-          FactoryType.Lazy,
-          FactoryType.Factory,
-        ].includes(type),
-        `Cannot operate with type "${type}"`
-      );
-
-      assert(
         FactoryType.Instant === type
           ? (params as never as unknown[]).length === 0
           : true,
-        'Cannot use parameters with "Singleton" type'
+        'Cannot use parameters with "Instant" type'
       );
 
       if (type === FactoryType.Factory) {
@@ -78,13 +74,11 @@ export function createFactory<T, P>(
     },
     () => {
       if (effectiveDisposer !== null) {
-        new Promise<null>((resolve) => {
+        queueMicrotask(() => {
           try {
             effectiveDisposer(object);
           } catch (error) {
             // Supress an error
-          } finally {
-            resolve(null);
           }
         });
       }

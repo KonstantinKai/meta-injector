@@ -1,0 +1,34 @@
+{
+  "name": "internal-tmdb",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/internal/tmdb/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/internal/tmdb",
+        "main": "packages/internal/tmdb/src/index.ts",
+        "tsConfig": "packages/internal/tmdb/tsconfig.lib.json",
+        "assets": ["packages/internal/tmdb/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/internal/tmdb/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/packages/internal/tmdb"],
+      "options": {
+        "jestConfig": "packages/internal/tmdb/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

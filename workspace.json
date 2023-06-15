@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "projects": {
-    "meta-injector": "packages/meta-injector",
-    "meta-injector-react": "packages/meta-injector-react",
-    "react": "examples/react"
-  }
-}

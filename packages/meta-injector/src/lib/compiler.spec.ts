@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { FactoryType } from './createFactory';
-import { MetaInjector } from './MetaInjector';
+import { createMetaInjector } from './createMetaInjector';
 
 interface E {
   dispose: () => void;
@@ -10,32 +10,32 @@ interface E {
 
 function ee(a: boolean): E {
   return {
-    dispose: () => { },
-    m4: () => { },
+    dispose: () => {},
+    m4: () => {},
   };
 }
 
 describe('compiler test', () => {
   it('test #1', () => {
-    const di = new MetaInjector();
+    const di = createMetaInjector();
 
     class A {
-      constructor(public a?: string) { }
-      m() { }
+      constructor(public a?: string) {}
+      m() {}
     }
     class B {
-      m1() { }
+      m1() {}
     }
     class C {
-      m2() { }
+      m2() {}
     }
     class D {
-      dispose(): void { }
-      m3() { }
+      dispose(): void {}
+      m3() {}
     }
     class F {
-      constructor(a: number, b?: number) { }
-      m5() { }
+      constructor(a: number, b?: number) {}
+      m5() {}
     }
 
     const m1 = di.createMeta<A, typeof A>();

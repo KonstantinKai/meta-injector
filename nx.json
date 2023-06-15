@@ -1,15 +1,27 @@
 {
-  "extends": "@nrwl/workspace/presets/core.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    }
+  },
   "workspaceLayout": {
     "appsDir": "examples",
     "libsDir": "packages"
   },
+  "extends": "@nx/workspace/presets/core.json",
   "npmScope": "kdev",
   "affected": {
     "defaultBase": "main"
   },
   "cli": {
-    "defaultCollection": "@nrwl/workspace"
+    "defaultCollection": "@nx/workspace"
   },
   "tasksRunnerOptions": {
     "default": {
@@ -20,7 +32,7 @@
     }
   },
   "generators": {
-    "@nrwl/react": {
+    "@nx/react": {
       "application": {
         "style": "css",
         "linter": "eslint",
@@ -34,12 +46,23 @@
         "linter": "eslint"
       }
     },
-    "@nrwl/js:library": {
-      "library": {
-        "buildable": true,
-        "publishable": true
+    "@nx/next": {
+      "application": {
+        "style": "@emotion/styled",
+        "linter": "eslint"
       }
     }
   },
-  "defaultProject": "react"
+  "defaultProject": "react",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": ["{workspaceRoot}/babel.config.json"],
+    "production": [
+      "default",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s"
+    ]
+  }
 }

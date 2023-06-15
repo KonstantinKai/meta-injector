@@ -1,3 +1,3 @@
-import { MetaInjector } from '@kdev/meta-injector';
+import { createMetaInjector } from '@kdev/meta-injector';
 
-export const injector = new MetaInjector(process.env['NODE_ENV'] === 'test');
+export const injector = createMetaInjector(process.env['NODE_ENV'] === 'test');

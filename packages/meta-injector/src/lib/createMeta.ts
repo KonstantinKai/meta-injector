@@ -18,7 +18,7 @@ export type Meta<T, P = unknown> = readonly [
   /**
    * Always equals `undefined`, **only** for type referring
    *
-   * **Note:** don't change the index of this field
+   * NOTE: don't change the index of this field
    */
   runtimeType: T,
 
