@@ -1,4 +1,31 @@
 {
   "name": "@kdev/meta-injector-react",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "keywords": [
+    "di",
+    "ioc",
+    "service-locator",
+    "dependency-injection",
+    "react-binding"
+  ],
+  "description": "React binding for @kdev/meta-injector",
+  "author": {
+    "name": "KonstantinKai",
+    "email": "kai@konstantinkai.dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KonstantinKai/meta-injector",
+    "directory": "packages/meta-injector-react"
+  },
+  "bugs": {
+    "url": "https://github.com/KonstantinKai/meta-injector/issues"
+  },
+  "funding": [
+    {
+      "type": "buymeacoffee",
+      "url": "https://www.buymeacoffee.com/konstantinkai"
+    }
+  ]
 }

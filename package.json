@@ -4,6 +4,25 @@
   "license": "MIT",
   "scripts": {},
   "private": true,
+  "keywords": [
+    "di",
+    "ioc",
+    "service-locator",
+    "dependency-injection"
+  ],
+  "description": "Lightweight, Typescript friendly, easy to use and understand service locator implementation for JavaScript and Node.js applications",
+  "author": {
+    "name": "KonstantinKai",
+    "email": "kai@konstantinkai.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KonstantinKai/meta-injector",
+    "directory": "packages/meta-injector-react"
+  },
+  "bugs": {
+    "url": "https://github.com/KonstantinKai/meta-injector/issues"
+  },
   "dependencies": {
     "@emotion/react": "11.10.5",
     "@emotion/server": "11.10.0",

@@ -1,6 +1,6 @@
 # ![meta injector react logo](../../assets/meta-injector-react.png)
 
-`meta-injector` and `React` binding
+React binding for `@kdev/meta-injector`
 
 ---
 
@@ -16,7 +16,7 @@ npm install @kdev/meta-injector-react
 
 ## Usage
 
-Create application level hook and ReactElement for using `meta-injector`
+Create application level hook and ReactElement for using `@kdev/meta-injector`
 
 ```ts
 // file: services.ts

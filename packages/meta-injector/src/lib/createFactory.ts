@@ -7,7 +7,7 @@ import { InferParameters } from './types';
 export type Creator<T, P = unknown> = InferParameters<P, T>;
 
 /**
- * Possibly `obj` can be `null` in case for `LateSingleton, Factory` if object didn't accessed it before
+ * Possibly `obj` can be `null` in case for `Lazy, Factory` if object didn't accessed it before
  */
 export type Disposer<T> = (obj: T | null) => unknown;
 

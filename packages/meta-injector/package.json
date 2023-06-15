@@ -1,5 +1,31 @@
 {
   "name": "@kdev/meta-injector",
   "version": "0.0.1",
-  "type": "commonjs"
+  "type": "commonjs",
+  "keywords": [
+    "di",
+    "ioc",
+    "service-locator",
+    "dependency-injection"
+  ],
+  "description": "Lightweight, Typescript friendly, easy to use and understand service locator implementation for JavaScript and Node.js applications",
+  "author": {
+    "name": "KonstantinKai",
+    "email": "kai@konstantinkai.dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KonstantinKai/meta-injector",
+    "directory": "packages/meta-injector"
+  },
+  "bugs": {
+    "url": "https://github.com/KonstantinKai/meta-injector/issues"
+  },
+  "funding": [
+    {
+      "type": "buymeacoffee",
+      "url": "https://www.buymeacoffee.com/konstantinkai"
+    }
+  ]
 }

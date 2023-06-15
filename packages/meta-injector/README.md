@@ -18,7 +18,7 @@ This lib was created with respect of testability. You can override binded `meta`
 <!-- TODO: review -->
 
 Have a centralized place for application services. No need to specify type of service implicitly, your service type holds `meta` descriptor.
-Since typescript `import type` feature was released and combining it with async `import()` feature of ES specification I decide to create dependency injection solution for projects I'm working with. For large application final code bundle size plays an important role. Less code faster start. `React` with `MobX` is my primary UI tools
+Since typescript `import type` feature was released and combining it with async `import()` feature of ES specification I decide to create dependency injection solution for projects I'm working with. For large application final code bundle size plays an important role. Less code faster start.
 
 ## Installation
 
@@ -82,11 +82,11 @@ const metaInstant = injector.createMeta<'Instant'>();
 const metaLazy = injector.createMeta<'Lazy'>();
 
 injector.register(metaInstant, () => 'Instant', FactoryType.Instant); // will call creator function immediately and store 'Instant' string in memory
-injector.register(metaLazy, () => 'Lazy', FactoryType.Lazy); // doesn't call creator function
+injector.register(metaLazy, () => 'Lazy', FactoryType.Lazy); // will not call creator function
 
 const [instantStr] = injector.retrieve(metaInstant); // returns previously created 'Instant' string
 const [lazyStr1] = injector.retrieve(metaLazy); // will call creator function and returns 'Lazy' string
-const [lazyStr2] = injector.retrieve(metaLazy); // doesn't call creator function and returns previously created 'Lazy' string
+const [lazyStr2] = injector.retrieve(metaLazy); // will not call creator function and returns previously created 'Lazy' string
 ```
 
 Get access to this service in some code of your app
@@ -118,6 +118,7 @@ function createService2(a: boolean): Service2 {
   return { a };
 }
 
+// declare second type parameter to infer constructor or function arguments
 const s1Meta = injector.createMeta<Service1, typeof Service1>('s1');
 const s2Meta = injector.createMeta<Service2, typeof createService2>('s2');
 
@@ -129,10 +130,10 @@ injector.register(
 injector.register(
   s2Meta,
   (...args) => createService2(...args),
-  FactoryType.FactoryType
+  FactoryType.Factory
 );
 
-/// Now you can create your services every time with necessary parameters. All parameters are strong typed
+// Now you can create your services every time with necessary parameters. All parameters are strong typed
 const [s1_1, s2_1] = injector.retrieve(
   s1Meta.withParams('str1', 1),
   s2Meta.withParams(true)
@@ -181,6 +182,93 @@ injector.register(
 // ...
 // This method will call dispose function if they was specified
 injector.unregister(meta);
+```
+
+## Integration
+
+**React**
+
+Easy to use `@kdev/meta-injector` library with React via `@kdev/@meta-injector-react` bindings. This library provides hook and ReactElement for retrieving services from the registry
+
+Create an application wide hook and element:
+
+```ts
+// file: useInjector.ts
+import { injector } from './app-injector';
+import { createMetaInjectorHook } from '@kdev/meta-injector-react';
+
+export const useInjector = createMetaInjectorHook(injector);
+```
+
+```ts
+// file: InjectorElement.ts
+import { injector } from './injector';
+import { createMetaInjectorElement } from '@kdev/meta-injector-react';
+
+export const InjectorElement = createMetaInjectorElement(injector);
+```
+
+Usage
+
+For example we have the following services
+
+```ts
+// file: services.ts
+import { injector } from './injector';
+
+export const services = {
+  service1: injector.createMeta<'str1'>(),
+  service2: injector.createMeta<'str2'>(),
+  service3: injector.createMeta<'str3'>(),
+} as const;
+```
+
+Retrieve services with the hook in `FunctionComponent`
+
+```tsx
+// file: TestElement1.tsx
+import { FC } from 'react';
+import { services } from './services';
+import { useInjector } from './useInjector';
+
+export const TestElement1: FC = () => {
+  const [service1, service2, service3] = useInjector(
+    services.service1,
+    services.service2,
+    services.service3
+  );
+
+  return (
+    <>
+      <div>{service1 /* str1 */}</div>
+      <div>{service2 /* str2 */}</div>
+      <div>{service3 /* str3 */}</div>
+    </>
+  );
+};
+```
+
+Retrieve services with the `Element` in `FunctionComponent`
+
+```tsx
+// file: TestElement2.tsx
+import { FC } from 'react';
+import { services } from './services';
+import { InjectElement } from './InjectElement';
+
+export const TestElement2: FC = () => (
+  <InjectElement
+    metaList={[services.service1, services.service2, services.service3]}
+  >
+    {(service1, service2, service3) => (
+      <>
+        <div>{service1 /* str1 */}</div>
+        <div>{service2 /* str2 */}</div>
+        <div>{service3 /* str3 */}</div>
+      </>
+    )}
+  </InjectElement>
+);
 ```
 
 ## Testability
@@ -271,5 +359,29 @@ import type { BackendAPI } from './BackendAPI';
 
 import './appLogic1Registration';
 
-class MockedBac
+class MockedBackendAPI implements BackendAPI {
+  fetchThing1(param1: string): Promise<string[]> {
+    return Promise.resolve(['str1', 'str2', 'str3', 'str4']);
+  }
+}
+
+describe('app logic 1', () => {
+  before(() => {
+    // Override services.backendAPI with mocked implementation
+    injector.register(services.backendAPI, () => new MockedBackendAPI());
+  });
+
+  after(() => {
+    // Restore initial implementation of the service
+    injector.restore(services.backendAPI);
+  });
+
+  test('Should works correctly with list of strings', async () => {
+    const [appLogic1] = injector.retrieve(services.appLogic1);
+
+    await appLogic1.fetchThing1('param1');
+
+    expect(appLogic1.listOfString).toEqual(['str1', 'str2', 'str3', 'str4']);
+  });
+});
 ```
