@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Meta } from './createMeta';
+
 export type InferParameters<P, R> = (
   ...params: P extends abstract new (...args: any) => any
     ? ConstructorParameters<P>
@@ -8,3 +10,12 @@ export type InferParameters<P, R> = (
     ? P
     : never
 ) => R;
+
+export type UnwrapMetaType<T> = T extends Meta<infer U> ? U : T;
+
+export type InferMetaTypeFromArgs<T extends [...any[]]> = T extends [
+  infer H,
+  ...infer R
+]
+  ? [UnwrapMetaType<H>, ...InferMetaTypeFromArgs<R>]
+  : [];

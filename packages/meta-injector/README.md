@@ -15,9 +15,7 @@ This lib was created with respect of testability. You can override binded `meta`
 
 ## Motivation
 
-<!-- TODO: review -->
-
-Have a centralized place for application services. No need to specify type of service implicitly, your service type holds `meta` descriptor.
+Have a centralized place for application services. No need to specify type of service implicitly on access, your service type holds `meta` descriptor.
 Since typescript `import type` feature was released and combining it with async `import()` feature of ES specification I decide to create dependency injection solution for projects I'm working with. For large application final code bundle size plays an important role. Less code faster start.
 
 ## Installation

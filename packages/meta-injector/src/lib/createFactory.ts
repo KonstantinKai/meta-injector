@@ -29,7 +29,7 @@ export const enum FactoryType {
 }
 
 export type Factory<T, P> = readonly [
-  getObject: (params: P) => T,
+  retrieve: (params: P) => T,
 
   /**
    * Add ability for disposing resources when calling `unregister` method of `MetaInjector`

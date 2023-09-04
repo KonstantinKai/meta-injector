@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { FactoryType, MetaInjector } from '@kdev/meta-injector';
+import { FactoryType, createMetaInjector } from '@kdev/meta-injector';
 import { createMetaInjectorHook } from './createMetaInjectorHook';
 
-const injector = new MetaInjector();
+const injector = createMetaInjector();
 const useInjector = createMetaInjectorHook(injector);
 
 function service(name: string): string {
@@ -16,9 +16,12 @@ injector.register(m1, service, FactoryType.Factory);
 
 describe('createMetaInjectorHook usage', () => {
   it('test #1', () => {
-    const { result, rerender } = renderHook((meta: typeof m1) => useInjector(meta), {
-      initialProps: m1,
-    });
+    const { result, rerender } = renderHook(
+      (meta: typeof m1) => useInjector(meta),
+      {
+        initialProps: m1,
+      }
+    );
 
     const result1 = result.current;
     expect(result1).toEqual(['default']);

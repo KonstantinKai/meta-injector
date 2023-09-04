@@ -17,7 +17,7 @@ describe('MetaInjector', () => {
     const injector = createMetaInjector();
 
     expect(() => injector.retrieve(createMeta(1, '1'))).toThrow(
-      'Object with id@1 is not registered in MetaInjector'
+      'Object with id@1 is not registered'
     );
 
     const fn1 = jest.fn();
@@ -33,7 +33,7 @@ describe('MetaInjector', () => {
     expect(fn1).toBeCalledTimes(1);
 
     expect(() => injector.register(m1, () => 'str1')).toThrow(
-      'Object with id@1 already registered in MetaInjector'
+      'Object with id@1 already registered'
     );
 
     expect(() => injector.retrieve(m1.withParams(1))).toThrow(
@@ -57,7 +57,7 @@ describe('MetaInjector', () => {
     expect(fn2).toBeCalledTimes(1);
 
     expect(() => injector.register(createMeta(2, '2'), () => 'str2')).toThrow(
-      'Object with id@2 already registered in MetaInjector'
+      'Object with id@2 already registered'
     );
 
     expect(() =>
@@ -78,7 +78,7 @@ describe('MetaInjector', () => {
       FactoryType.Factory
     );
 
-    const [r31, r32, r33, r34] = injector.retrieve(
+    const [r31, r32, r33] = injector.retrieve(
       m3,
       m3.withParams(1),
       m3.withParams(2).withParams(3),
@@ -97,7 +97,7 @@ describe('MetaInjector', () => {
 
     const m4 = injector.createMeta<string>('desc');
     expect(() => injector.retrieve(m4)).toThrow(
-      'Object with id@desc is not registered in MetaInjector'
+      'Object with id@desc is not registered'
     );
   });
 

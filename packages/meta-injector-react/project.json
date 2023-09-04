@@ -13,7 +13,7 @@
         "tsConfig": "packages/meta-injector-react/tsconfig.lib.json",
         "project": "packages/meta-injector-react/package.json",
         "entryFile": "packages/meta-injector-react/src/index.ts",
-        "external": ["react/jsx-runtime"],
+        "external": ["react/jsx-runtime", "react"],
         "rollupConfig": "@nx/react/plugins/bundle-rollup",
         "compiler": "babel",
         "deleteOutputPath": true,

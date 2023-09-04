@@ -7,6 +7,7 @@ import {
   Disposer,
 } from './createFactory';
 import { createMeta as createMetaInternal, Meta, MetaId } from './createMeta';
+import { InferMetaTypeFromArgs } from './types';
 
 let _internalId = 0;
 
@@ -58,99 +59,11 @@ export interface MetaInjector {
   /**
    * Retrieves objects registered in the scope.
    *
-   * NOTE: limit by 8 elements is only for TS compiler
-   *
    * @returns Tuple of objects transformed from input meta arguments
    */
-  retrieve<M1 extends Meta<unknown>>(meta1: M1): [M1[2]];
-  retrieve<M1 extends Meta<unknown>, M2 extends Meta<unknown>>(
-    meta1: M1,
-    meta2: M2
-  ): [M1[2], M2[2]];
-  retrieve<
-    M1 extends Meta<unknown>,
-    M2 extends Meta<unknown>,
-    M3 extends Meta<unknown>
-  >(
-    meta1: M1,
-    meta2: M2,
-    meta3: M3
-  ): [M1[2], M2[2], M3[2]];
-  retrieve<
-    M1 extends Meta<unknown>,
-    M2 extends Meta<unknown>,
-    M3 extends Meta<unknown>,
-    M4 extends Meta<unknown>
-  >(
-    meta1: M1,
-    meta2: M2,
-    meta3: M3,
-    meta4: M4
-  ): [M1[2], M2[2], M3[2], M4[2]];
-  retrieve<
-    M1 extends Meta<unknown>,
-    M2 extends Meta<unknown>,
-    M3 extends Meta<unknown>,
-    M4 extends Meta<unknown>,
-    M5 extends Meta<unknown>
-  >(
-    meta1: M1,
-    meta2: M2,
-    meta3: M3,
-    meta4: M4,
-    meta5: M5
-  ): [M1[2], M2[2], M3[2], M4[2], M5[2]];
-  retrieve<
-    M1 extends Meta<unknown>,
-    M2 extends Meta<unknown>,
-    M3 extends Meta<unknown>,
-    M4 extends Meta<unknown>,
-    M5 extends Meta<unknown>,
-    M6 extends Meta<unknown>
-  >(
-    meta1: M1,
-    meta2: M2,
-    meta3: M3,
-    meta4: M4,
-    meta5: M5,
-    meta6: M6
-  ): [M1[2], M2[2], M3[2], M4[2], M5[2], M6[2]];
-  retrieve<
-    M1 extends Meta<unknown>,
-    M2 extends Meta<unknown>,
-    M3 extends Meta<unknown>,
-    M4 extends Meta<unknown>,
-    M5 extends Meta<unknown>,
-    M6 extends Meta<unknown>,
-    M7 extends Meta<unknown>
-  >(
-    meta1: M1,
-    meta2: M2,
-    meta3: M3,
-    meta4: M4,
-    meta5: M5,
-    meta6: M6,
-    meta7: M7
-  ): [M1[2], M2[2], M3[2], M4[2], M5[2], M6[2], M7[2]];
-  retrieve<
-    M1 extends Meta<unknown>,
-    M2 extends Meta<unknown>,
-    M3 extends Meta<unknown>,
-    M4 extends Meta<unknown>,
-    M5 extends Meta<unknown>,
-    M6 extends Meta<unknown>,
-    M7 extends Meta<unknown>,
-    M8 extends Meta<unknown>
-  >(
-    meta1: M1,
-    meta2: M2,
-    meta3: M3,
-    meta4: M4,
-    meta5: M5,
-    meta6: M6,
-    meta7: M7,
-    meta8: M8
-  ): [M1[2], M2[2], M3[2], M4[2], M5[2], M6[2], M7[2], M8[2]];
+  retrieve<T extends Meta<unknown>[]>(
+    ...metaArgs: [...T]
+  ): InferMetaTypeFromArgs<T>;
 
   /**
    * Restores previously overidden {@link Meta} in case if {@link _allowOverriding} equals `true`
@@ -166,7 +79,7 @@ export function createMetaInjector(
    * For example, you need to override some service for the test environment
    *
    * ```ts
-   * const di = new MetaInjector(process.env.NODE_ENV === 'test');
+   * const di = createMetaInjector(process.env.NODE_ENV === 'test');
    * ```
    *
    * @default false
@@ -182,21 +95,16 @@ export function createMetaInjector(
     delete storage[id];
   }
 
-  function _getObject<T, P>(meta: Meta<T, P>): T {
+  function _getFactory<T, P>(meta: Meta<T, P>): T {
     _ensureRegistered(meta);
 
-    const [id, , , params = []] = meta;
-    const [getObject] = _factories[id];
-
-    return getObject(params) as T;
+    const [id, , params = []] = meta;
+    return _factories[id][0](params) as T;
   }
 
   function _ensureRegistered(meta: Meta<unknown>): void {
     const [, desc] = meta;
-    assert(
-      isRegistered(meta),
-      `Object with id@${desc} is not registered in MetaInjector`
-    );
+    assert(isRegistered(meta), `Object with id@${desc} is not registered`);
   }
 
   function isRegistered(meta: Meta<unknown>): boolean {
@@ -217,7 +125,7 @@ export function createMetaInjector(
 
     assert(
       !_allowOverriding ? !isRegistered(meta) : true,
-      `Object with id@${desc} already registered in MetaInjector`
+      `Object with id@${desc} already registered`
     );
 
     if (_allowOverriding && isRegistered(meta)) {
@@ -232,8 +140,10 @@ export function createMetaInjector(
         : FactoryType.Lazy;
     const disposer = typeof third === 'function' ? third : null;
 
-    const factory = createFactory(type, creator, disposer);
-    _factories[id] = factory as Factory<unknown, unknown>;
+    _factories[id] = createFactory(type, creator, disposer) as Factory<
+      unknown,
+      unknown
+    >;
   }
 
   function restore(...metaArgs: Meta<unknown>[]): void {
@@ -268,8 +178,10 @@ export function createMetaInjector(
     }
   }
 
-  function retrieve(...metaArgs: Meta<unknown>[]): unknown[] {
-    return metaArgs.map((meta) => _getObject(meta));
+  function retrieve<T extends Meta<unknown>[]>(
+    ...metaArgs: [...T]
+  ): InferMetaTypeFromArgs<T> {
+    return metaArgs.map((m) => _getFactory(m)) as InferMetaTypeFromArgs<T>;
   }
 
   return Object.freeze({
@@ -277,7 +189,7 @@ export function createMetaInjector(
     createMeta,
     register,
     restore,
-    retrieve: retrieve as MetaInjector['retrieve'],
+    retrieve,
     unregister,
   });
 }
