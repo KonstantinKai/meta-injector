@@ -150,7 +150,7 @@ s2_1.a === true;
 s2_2.a === false;
 ```
 
-If you need free some resources after service destroying, sure...
+If you need free some resources after service destruction, sure...
 
 ```ts
 class Service {
