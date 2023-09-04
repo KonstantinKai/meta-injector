@@ -4,10 +4,6 @@ Lightweight, Typescript friendly, easy to use and understand service locator imp
 
 ---
 
-Do you like the package? Buy me a coffee :)
-
-<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
-
 No constructors binding, your service can be as anything that javascript allows (plain objects, functions, primitives, classes, .etc).
 Just create simple `Meta<Type, OptionalCreatorParameters>` description of your service, bind this `meta` to the `Creator<Type>` and use it anywhere. You don't need to remember service alias or service type anymore.
 
@@ -383,3 +379,10 @@ describe('app logic 1', () => {
   });
 });
 ```
+
+---
+
+Do you like the package? Buy me a coffee :)
+
+<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
+

@@ -2,7 +2,9 @@
   "name": "kdev",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "test": "nx run-many -t test -p meta-injector meta-injector-react --coverage"
+  },
   "private": true,
   "keywords": [
     "di",

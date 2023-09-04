@@ -2,11 +2,7 @@
 
 React binding for `@kdev/meta-injector`
 
----
-
-Do you like the package? Buy me a coffee :)
-
-<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
+___
 
 ## Installation
 
@@ -95,3 +91,10 @@ const Element: FC = () => (
   </InjectElement>
 );
 ```
+
+---
+
+Do you like the package? Buy me a coffee :)
+
+<a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
+
