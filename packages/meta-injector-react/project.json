@@ -47,6 +47,12 @@
         "jestConfig": "packages/meta-injector-react/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "release": {
+      "executor": "nx-release:build-update-publish",
+      "options": {
+        "libName": "meta-injector-react"
+      }
     }
   }
 }

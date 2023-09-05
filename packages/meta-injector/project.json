@@ -28,7 +28,8 @@
           "rollupConfig": "dist/out-tsc/tools/configs/rollup-minify.js",
           "format": ["esm", "cjs"]
         }
-      }
+      },
+      "defaultConfiguration": "production"
     },
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -49,6 +50,12 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsc --build tools/tsconfig.tools.json"
+      }
+    },
+    "release": {
+      "executor": "nx-release:build-update-publish",
+      "options": {
+        "libName": "meta-injector"
       }
     }
   },

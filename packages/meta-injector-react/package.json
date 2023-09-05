@@ -1,12 +1,12 @@
 {
   "name": "@kdev/meta-injector-react",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "keywords": [
     "di",
     "ioc",
     "service-locator",
     "dependency-injection",
-    "react-binding"
+    "meta-injector-react-binding"
   ],
   "description": "React binding for @kdev/meta-injector",
   "author": {
@@ -27,5 +27,8 @@
       "type": "buymeacoffee",
       "url": "https://www.buymeacoffee.com/konstantinkai"
     }
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

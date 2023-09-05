@@ -1,6 +1,6 @@
 {
   "name": "@kdev/meta-injector",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "commonjs",
   "keywords": [
     "di",
@@ -27,5 +27,8 @@
       "type": "buymeacoffee",
       "url": "https://www.buymeacoffee.com/konstantinkai"
     }
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
