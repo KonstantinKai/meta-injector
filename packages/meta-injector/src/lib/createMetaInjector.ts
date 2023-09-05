@@ -86,20 +86,19 @@ export function createMetaInjector(
    */
   allowOverriding?: boolean
 ): MetaInjector {
-  const _factories: Record<MetaId, Factory<unknown, unknown>> = {};
-  const _pendingRestore: Record<MetaId, Factory<unknown, unknown>> = {};
+  const _factories: Map<MetaId, Factory<unknown, unknown>> = new Map();
+  const _pendingRestore: Map<MetaId, Factory<unknown, unknown>> = new Map();
   const _allowOverriding = allowOverriding ?? false;
 
-  function _releaseStorage(id: MetaId, storage: Record<MetaId, unknown>): void {
-    storage[id] = null;
-    delete storage[id];
+  function _releaseStorage(id: MetaId, storage: Map<MetaId, unknown>): void {
+    storage.delete(id);
   }
 
   function _getFactory<T, P>(meta: Meta<T, P>): T {
     _ensureRegistered(meta);
 
     const [id, , params = []] = meta;
-    return _factories[id][0](params) as T;
+    return _factories.get(id)![0](params) as T;
   }
 
   function _ensureRegistered(meta: Meta<unknown>): void {
@@ -108,7 +107,7 @@ export function createMetaInjector(
   }
 
   function isRegistered(meta: Meta<unknown>): boolean {
-    return meta[0] in _factories;
+    return _factories.has(meta[0]);
   }
 
   function createMeta<T, P = unknown>(desc?: string): Meta<T, P> {
@@ -129,7 +128,7 @@ export function createMetaInjector(
     );
 
     if (_allowOverriding && isRegistered(meta)) {
-      _pendingRestore[id] = _factories[id];
+      _pendingRestore.set(id, _factories.get(id)!);
     }
 
     const type =
@@ -140,10 +139,10 @@ export function createMetaInjector(
         : FactoryType.Lazy;
     const disposer = typeof third === 'function' ? third : null;
 
-    _factories[id] = createFactory(type, creator, disposer) as Factory<
-      unknown,
-      unknown
-    >;
+    _factories.set(
+      id,
+      createFactory(type, creator, disposer) as Factory<unknown, unknown>
+    );
   }
 
   function restore(...metaArgs: Meta<unknown>[]): void {
@@ -155,11 +154,11 @@ export function createMetaInjector(
     for (const meta of metaArgs) {
       const [id, desc] = meta;
       assert(
-        id in _pendingRestore,
+        _pendingRestore.has(id),
         `Override existing registration with id@${desc} before use this method`
       );
 
-      _factories[id] = _pendingRestore[id];
+      _factories.set(id, _pendingRestore.get(id)!);
       _releaseStorage(id, _pendingRestore);
     }
   }
@@ -169,7 +168,7 @@ export function createMetaInjector(
       _ensureRegistered(meta);
 
       const [id] = meta;
-      const [, dispose] = _factories[id];
+      const [, dispose] = _factories.get(id)!;
 
       dispose();
 

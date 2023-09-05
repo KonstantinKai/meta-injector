@@ -1,6 +1,6 @@
 # ![meta injector logo](./assets/meta-injector.png)
 
-Lightweight, Typescript friendly, easy to use and understand service locator implementation.
+Lightweight, Typescript friendly, easy to use and understand service locator implementation. **(just 800 B gzipped)**
 
 ---
 
