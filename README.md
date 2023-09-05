@@ -5,9 +5,15 @@ Lightweight, Typescript friendly, easy to use and understand service locator imp
 ---
 
 No constructors binding, your service can be as anything that javascript allows (plain objects, functions, primitives, classes, .etc).
-Just create simple `Meta<Type, OptionalCreatorParameters>` description of your service, bind this `meta` to the `Creator<Type>` and use it anywhere. You don't need to remember service alias or service type anymore.
+Just create simple meta descriptor with `const service1Meta = injector.createMeta<Type>('<optionally descriptive name>')` of your service, bind this `meta` to the with `injector.register(service1Meta, () => Type)` and use it anywhere with `const [service1, service2, service3, service4] = injector.retrieve(service1Meta, service2Meta, service3Meta, service4Meta, /* rest */)`. You don't need to remember service alias or service type anymore.
 
-This lib was created with respect of testability. You can override binded `meta` with another implementation of destination services for testing environment or production runtime (only if you known what are you doing) with ability of restoring original implementation.
+## Key features
+
+- Simplicity
+- Lightweight (800 B gzipped)
+- Typescript friendly
+- Lazy services initialization
+- Services mocking for testing with the ability to restore them on teardown
 
 ## Motivation
 
@@ -41,7 +47,9 @@ export class Feature1 {
 }
 ```
 
-Create meta object. You can create meta objects in separate file related to the service, or collects all application services in one file, but don't forget import your services with `type` modifier e.g. `import type { Type } from './Type'`. [Read more](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export) about `import type`
+Create meta descriptor. You can create meta objects in separate file related to the service, or collects all application services in one file, but don't forget import your services with `type` modifier e.g. `import type { Type } from './Type'`. [Read more](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export) about `import type`
+
+*Variant 1:* holds meta descriptor in a separate file
 
 ```ts
 // file: feature1Meta.ts
@@ -51,6 +59,56 @@ import type { Feature1 } from './Feature1';
 export const feature1Meta = injector.createMeta<Feature1>(
   'descriptive name of service'
 );
+```
+
+*Variant 2:* holds meta descriptor in one file
+
+```ts
+// file: services.ts
+import { injector } from './injector';
+import type { Feature1 } from './Feature1';
+import type { Feature2 } from './Feature2';
+import type { Feature3 } from './Feature3';
+import type { Feature4 } from './Feature4';
+
+export const services = {
+  feature1: injector.createMeta<Feature1>('feature1'),
+  feature2: injector.createMeta<Feature2>('feature2'),
+  feature3: injector.createMeta<Feature3>('feature3'),
+  feature4: injector.createMeta<Feature4>('feature4'),
+} as const;
+```
+
+*Variant 3:* holds meta descriptor in a feature based manner
+
+```ts
+// file: feature1/meta.ts
+import { injector } from '@/injector';
+import type { Feature1 } from './biz/Feature1';
+
+export const feature1ServicesMeta = {
+  feature1: injector.createMeta<Feature1>('feature1');
+} as const;
+
+---
+// file: feature2/meta.ts
+import { injector } from '@/injector';
+import type { Feature2 } from './biz/Feature2';
+
+export const feature2ServicesMeta = {
+  feature2: injector.createMeta<Feature2>('feature2');
+} as const;
+
+---
+// file: app/services.ts
+import { feature1ServicesMeta } from 'feature1/meta';
+import { feature2ServicesMeta } from 'feature2/meta';
+
+export const services = {
+  ...feature1ServicesMeta,
+  ...feature2ServicesMeta,
+} as const;
+
 ```
 
 Bind meta with implementation physically
@@ -146,7 +204,7 @@ s2_1.a === true;
 s2_2.a === false;
 ```
 
-If you need free some resources after service destruction, sure...
+If you need free some resources after the service was unregistered, sure...
 
 ```ts
 class Service {
@@ -267,6 +325,8 @@ export const TestElement2: FC = () => (
 
 ## Testability
 
+This lib was created with respect of testability. You can override binded `meta` with another implementation of destination services for testing environment or production runtime (only if you known what are you doing) with ability of restoring original implementation.
+
 To able to override existing bindings for ability to test your code with mocked or overridden dependencies you should pass `true` parameter to the `createMetaInjector` function. To do this you can use environment variables for example. Go to your app level `MetaInjector` instance and do the following
 
 ```ts
@@ -380,9 +440,27 @@ describe('app logic 1', () => {
 });
 ```
 
+## API
+
+```ts
+const api = createMetaInjector();
+```
+
+| Method                                                                               | Description                                                                                                            |
+|--------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `createMeta<T, P = unknown>(desc?: string): Meta<T, P>`                              | Creates `Meta` and associate it with type `T` and creator parameters `P` if exists                                     |
+| `register<T, P>(meta: Meta<T, P>, creator: Creator<T, P>): void`                     | Binds `Meta` with `Creator`. `register` can accept four arguments, see `MetaInjector` definition for more details      |
+| `retrieve<T extends Meta<unknown>[]>(...metaArgs: [...T]): InferMetaTypeFromArgs<T>` | Retrieves objects registered in the `injector`. Returns `Tuple` of objects transformed from input meta arguments       |
+| `unregister(...metaArgs: Meta<unknown>[]): void`                                     | Unregister `Creator` binded to the `Meta` from `injector` and run `dispose` function associated with this registration |
+| `isRegistered(meta: Meta<unknown>): boolean`                                         | Safely checks that `Creator` is linked with `Meta`                                                                     |
+| `restore(...metaArgs: Meta<unknown>[]): void`                                        | Restores previously overidden `Meta` in case if `_allowOverriding` equals `true`                                       |
+
 ---
 
 Do you like the package? Buy me a coffee :)
 
 <a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
 
+___
+
+### Inspired by `get_it` `dart` package
