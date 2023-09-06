@@ -1,4 +1,4 @@
-import { FactoryType } from '@kdev/meta-injector';
+import { FactoryType } from '@kdevsoft/meta-injector';
 import { injector } from '../injector';
 import { Feature2 } from './Feature2';
 import { feature2Meta } from './meta';

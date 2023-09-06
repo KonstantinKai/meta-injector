@@ -1,18 +1,18 @@
 # ![meta injector react logo](../../assets/meta-injector-react.png)
 
-React binding for `@kdev/meta-injector`
+React binding for `@kdevsoft/meta-injector`
 
-___
+---
 
 ## Installation
 
 ```sh
-npm install @kdev/meta-injector-react
+npm install @kdevsoft/meta-injector-react
 ```
 
 ## Usage
 
-Create application level hook and ReactElement for using `@kdev/meta-injector`
+Create application level hook and ReactElement for using `@kdevsoft/meta-injector`
 
 ```ts
 // file: services.ts
@@ -27,7 +27,7 @@ export const services = {
 
 ```ts
 // file: useInjector.ts
-import { createMetaInjectorHook } from '@kdev/meta-injector-react';
+import { createMetaInjectorHook } from '@kdevsoft/meta-injector-react';
 import { injector } from './injector';
 
 export const useInjector = createMetaInjectorHook(injector);
@@ -35,7 +35,7 @@ export const useInjector = createMetaInjectorHook(injector);
 
 ```ts
 // file: InjectorElement.ts
-import { createMetaInjectorElement } from '@kdev/meta-injector-react';
+import { createMetaInjectorElement } from '@kdevsoft/meta-injector-react';
 import { injector } from './injector';
 
 export const InjectorElement = createMetaInjectorElement(injector);
@@ -50,11 +50,7 @@ import { services } from './services';
 import { useInjector } from './useInjector';
 
 const Element: FC = () => {
-  const [service1, service2, service3] = useInjector(
-    services.service1,
-    services.service2,
-    services.service3
-  );
+  const [service1, service2, service3] = useInjector(services.service1, services.service2, services.service3);
 
   return (
     <>
@@ -78,9 +74,7 @@ import { services } from './services';
 import { InjectElement } from './InjectElement';
 
 const Element: FC = () => (
-  <InjectElement
-    metaList={[services.service1, services.service2, services.service3]}
-  >
+  <InjectElement metaList={[services.service1, services.service2, services.service3]}>
     {(service1, service2, service3) => (
       <>
         <div>{service1 /* str1 */}</div>
@@ -97,4 +91,3 @@ const Element: FC = () => (
 Do you like the package? Buy me a coffee :)
 
 <a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
-

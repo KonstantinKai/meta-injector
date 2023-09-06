@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { render } from '@testing-library/react';
-import { FactoryType, createMetaInjector } from '@kdev/meta-injector';
+import { FactoryType, createMetaInjector } from '@kdevsoft/meta-injector';
 import { createMetaInjectorElement } from './createMetaInjectorElement';
 
 const injector = createMetaInjector();

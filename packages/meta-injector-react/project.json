@@ -29,7 +29,8 @@
         "production": {
           "rollupConfig": "dist/out-tsc/tools/configs/rollup-minify.js"
         }
-      }
+      },
+      "defaultConfiguration": "production"
     },
     "lint": {
       "executor": "@nx/linter:eslint",

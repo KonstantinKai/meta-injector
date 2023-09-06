@@ -2,7 +2,7 @@ import type {
   InferMetaTypeFromArgs,
   Meta,
   MetaInjector,
-} from '@kdev/meta-injector';
+} from '@kdevsoft/meta-injector';
 import { memo } from 'react';
 import { createMetaInjectorHook } from './createMetaInjectorHook';
 

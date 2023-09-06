@@ -1,8 +1,8 @@
-# ![meta injector logo](../../assets/meta-injector.png)
+# ![meta injector logo](https://github.com/KonstantinKai/meta-injector/raw/main/assets/meta-injector.png)
 
 Lightweight, Typescript friendly, easy to use and understand service locator implementation. **(just 800 B gzipped)**
 
-___
+---
 
 No constructors binding, your service can be as anything that javascript allows (plain objects, functions, primitives, classes, .etc).
 Just create simple meta descriptor with `const service1Meta = injector.createMeta<Type>('<optionally descriptive name>')` of your service, bind this `meta` to the with `injector.register(service1Meta, () => Type)` and use it anywhere with `const [service1, service2, service3, service4] = injector.retrieve(service1Meta, service2Meta, service3Meta, service4Meta, /* rest */)`. You don't need to remember service alias or service type anymore.
@@ -23,7 +23,7 @@ Since typescript `import type` feature was released and combining it with async 
 ## Installation
 
 ```sh
-npm install @kdev/meta-injector
+npm install @kdevsoft/meta-injector
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ Setting up your application. You should create app level instance of `MetaInject
 
 ```ts
 // file: injector.ts
-import { createMetaInjector } from '@kdev/meta-injector';
+import { createMetaInjector } from '@kdevsoft/meta-injector';
 
 export const injector = createMetaInjector();
 ```
@@ -49,19 +49,17 @@ export class Feature1 {
 
 Create meta descriptor. You can create meta objects in separate file related to the service, or collects all application services in one file, but don't forget import your services with `type` modifier e.g. `import type { Type } from './Type'`. [Read more](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export) about `import type`
 
-*Variant 1:* holds meta descriptor in a separate file
+_Variant 1:_ holds meta descriptor in a separate file
 
 ```ts
 // file: feature1Meta.ts
 import { injector } from './injector';
 import type { Feature1 } from './Feature1';
 
-export const feature1Meta = injector.createMeta<Feature1>(
-  'descriptive name of service'
-);
+export const feature1Meta = injector.createMeta<Feature1>('descriptive name of service');
 ```
 
-*Variant 2:* holds meta descriptor in one file
+_Variant 2:_ holds meta descriptor in one file
 
 ```ts
 // file: services.ts
@@ -79,7 +77,7 @@ export const services = {
 } as const;
 ```
 
-*Variant 3:* holds meta descriptor in a feature based manner
+_Variant 3:_ holds meta descriptor in a feature based manner
 
 ```ts
 // file: feature1/meta.ts
@@ -174,26 +172,12 @@ function createService2(a: boolean): Service2 {
 const s1Meta = injector.createMeta<Service1, typeof Service1>('s1');
 const s2Meta = injector.createMeta<Service2, typeof createService2>('s2');
 
-injector.register(
-  s1Meta,
-  (...args) => new Service2(...args),
-  FactoryType.Factory
-);
-injector.register(
-  s2Meta,
-  (...args) => createService2(...args),
-  FactoryType.Factory
-);
+injector.register(s1Meta, (...args) => new Service2(...args), FactoryType.Factory);
+injector.register(s2Meta, (...args) => createService2(...args), FactoryType.Factory);
 
 // Now you can create your services every time with necessary parameters. All parameters are strong typed
-const [s1_1, s2_1] = injector.retrieve(
-  s1Meta.withParams('str1', 1),
-  s2Meta.withParams(true)
-);
-const [s1_2, s2_2] = injector.retrieve(
-  s1Meta.withParams('str2', 2),
-  s2Meta.withParams(false)
-);
+const [s1_1, s2_1] = injector.retrieve(s1Meta.withParams('str1', 1), s2Meta.withParams(true));
+const [s1_2, s2_2] = injector.retrieve(s1Meta.withParams('str2', 2), s2Meta.withParams(false));
 
 s1_1.a === 'str1';
 s1_1.b === 1;
@@ -240,14 +224,14 @@ injector.unregister(meta);
 
 **React**
 
-Easy to use `@kdev/meta-injector` library with React via `@kdev/@meta-injector-react` bindings. This library provides hook and ReactElement for retrieving services from the registry
+Easy to use `@kdevsoft/meta-injector` library with React via `@kdevsoft/@meta-injector-react` bindings. This library provides hook and ReactElement for retrieving services from the registry
 
 Create an application wide hook and element:
 
 ```ts
 // file: useInjector.ts
 import { injector } from './app-injector';
-import { createMetaInjectorHook } from '@kdev/meta-injector-react';
+import { createMetaInjectorHook } from '@kdevsoft/meta-injector-react';
 
 export const useInjector = createMetaInjectorHook(injector);
 ```
@@ -255,7 +239,7 @@ export const useInjector = createMetaInjectorHook(injector);
 ```ts
 // file: InjectorElement.ts
 import { injector } from './injector';
-import { createMetaInjectorElement } from '@kdev/meta-injector-react';
+import { createMetaInjectorElement } from '@kdevsoft/meta-injector-react';
 
 export const InjectorElement = createMetaInjectorElement(injector);
 ```
@@ -284,11 +268,7 @@ import { services } from './services';
 import { useInjector } from './useInjector';
 
 export const TestElement1: FC = () => {
-  const [service1, service2, service3] = useInjector(
-    services.service1,
-    services.service2,
-    services.service3
-  );
+  const [service1, service2, service3] = useInjector(services.service1, services.service2, services.service3);
 
   return (
     <>
@@ -309,9 +289,7 @@ import { services } from './services';
 import { InjectElement } from './InjectElement';
 
 export const TestElement2: FC = () => (
-  <InjectElement
-    metaList={[services.service1, services.service2, services.service3]}
-  >
+  <InjectElement metaList={[services.service1, services.service2, services.service3]}>
     {(service1, service2, service3) => (
       <>
         <div>{service1 /* str1 */}</div>
@@ -331,7 +309,7 @@ To able to override existing bindings for ability to test your code with mocked 
 
 ```ts
 // file: injector.ts
-import { createMetaInjector } from '@kdev/meta-injector';
+import { createMetaInjector } from '@kdevsoft/meta-injector';
 
 export const injector = createMetaInjector(process.env.NODE_ENV === 'test');
 ```
@@ -447,7 +425,7 @@ const api = createMetaInjector();
 ```
 
 | Method                                                                               | Description                                                                                                            |
-|--------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
 | `createMeta<T, P = unknown>(desc?: string): Meta<T, P>`                              | Creates `Meta` and associate it with type `T` and creator parameters `P` if exists                                     |
 | `register<T, P>(meta: Meta<T, P>, creator: Creator<T, P>): void`                     | Binds `Meta` with `Creator`. `register` can accept four arguments, see `MetaInjector` definition for more details      |
 | `retrieve<T extends Meta<unknown>[]>(...metaArgs: [...T]): InferMetaTypeFromArgs<T>` | Retrieves objects registered in the `injector`. Returns `Tuple` of objects transformed from input meta arguments       |
@@ -455,12 +433,21 @@ const api = createMetaInjector();
 | `isRegistered(meta: Meta<unknown>): boolean`                                         | Safely checks that `Creator` is linked with `Meta`                                                                     |
 | `restore(...metaArgs: Meta<unknown>[]): void`                                        | Restores previously overidden `Meta` in case if `_allowOverriding` equals `true`                                       |
 
+## Tips
+- Allow overriding for dev environment with hot module replacement
+```ts
+export const injector = createMetaInjector(process.env.NODE_ENV === 'test' || typeof module.hot !== 'undefined');
+
+// or if you are using `vite`
+export const injector = createMetaInjector([typeof import.meta.hot !== 'undefined', import.meta.env.DEV].includes(true));
+```
+
 ---
 
 Do you like the package? Buy me a coffee :)
 
 <a href="https://www.buymeacoffee.com/konstantinkai" target="_blank"><img src="https://github.com/KonstantinKai/meta-injector/blob/main/assets/buymeacoffee-button.png?raw=true" alt="Buy Me A Coffee"></a>
 
-___
+---
 
 ### Inspired by `get_it` `dart` package

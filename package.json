@@ -1,13 +1,7 @@
 {
-  "name": "kdev",
+  "name": "@kdevsoft/meta-injector",
   "version": "0.0.0",
   "license": "MIT",
-  "nx": {},
-  "scripts": {
-    "lint": "nx run-many -t lint -p meta-injector meta-injector-react",
-    "test": "nx run-many -t test -p meta-injector meta-injector-react --coverage",
-    "build": "nx run-many -t build -p meta-injector meta-injector-react --configuration=production"
-  },
   "private": true,
   "keywords": [
     "di",

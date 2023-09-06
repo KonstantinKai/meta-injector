@@ -1,5 +1,5 @@
 {
-  "name": "@kdev/meta-injector-react",
+  "name": "@kdevsoft/meta-injector-react",
   "version": "1.0.0",
   "keywords": [
     "di",
@@ -8,7 +8,7 @@
     "dependency-injection",
     "meta-injector-react-binding"
   ],
-  "description": "React binding for @kdev/meta-injector",
+  "description": "React binding for @kdevsoft/meta-injector",
   "author": {
     "name": "KonstantinKai",
     "email": "kai@konstantinkai.dev"

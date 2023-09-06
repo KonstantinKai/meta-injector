@@ -16,7 +16,7 @@
     "libsDir": "packages"
   },
   "extends": "@nx/workspace/presets/core.json",
-  "npmScope": "kdev",
+  "npmScope": "kdevsoft",
   "affected": {
     "defaultBase": "main"
   },

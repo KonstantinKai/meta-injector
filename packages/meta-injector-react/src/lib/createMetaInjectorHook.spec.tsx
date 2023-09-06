@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { FactoryType, createMetaInjector } from '@kdev/meta-injector';
+import { FactoryType, createMetaInjector } from '@kdevsoft/meta-injector';
 import { createMetaInjectorHook } from './createMetaInjectorHook';
 
 const injector = createMetaInjector();

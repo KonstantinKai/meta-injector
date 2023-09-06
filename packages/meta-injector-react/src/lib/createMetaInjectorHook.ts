@@ -1,4 +1,4 @@
-import type { Meta, MetaInjector } from '@kdev/meta-injector';
+import type { Meta, MetaInjector } from '@kdevsoft/meta-injector';
 import { useMemo } from 'react';
 
 export const createMetaInjectorHook =
