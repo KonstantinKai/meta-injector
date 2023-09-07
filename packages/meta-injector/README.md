@@ -1,3 +1,5 @@
+![release](https://github.com/KonstantinKai/meta-injector/actions/workflows/release.yml/badge.svg)
+
 # ![meta injector logo](https://github.com/KonstantinKai/meta-injector/raw/main/assets/meta-injector.png)
 
 Lightweight, Typescript friendly, easy to use and understand service locator implementation. **(just 800 B gzipped)**
@@ -5,7 +7,18 @@ Lightweight, Typescript friendly, easy to use and understand service locator imp
 ---
 
 No constructors binding, your service can be as anything that javascript allows (plain objects, functions, primitives, classes, .etc).
-Just create simple meta descriptor with `const service1Meta = injector.createMeta<Type>('<optionally descriptive name>')` of your service, bind this `meta` to the with `injector.register(service1Meta, () => Type)` and use it anywhere with `const [service1, service2, service3, service4] = injector.retrieve(service1Meta, service2Meta, service3Meta, service4Meta, /* rest */)`. You don't need to remember service alias or service type anymore.
+```ts
+// just create simple meta descriptor of your service with
+const service1Meta = injector.createMeta<Type>('<optionally descriptive name>');
+
+// bind descriptor to the `Creator` with
+injector.register(service1Meta, () => Type);
+
+// and use it anywhere with
+const [service1, service2, service3, service4] = injector.retrieve(service1Meta, service2Meta, service3Meta, service4Meta, ...rest);
+// p.s. service2Meta, service3Meta, service4Meta, are just for showing how you can retrieve dependencies
+```
+You don't need to remember service alias or service type anymore.
 
 ## Key features
 
