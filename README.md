@@ -1,4 +1,5 @@
 ![release](https://github.com/KonstantinKai/meta-injector/actions/workflows/release.yml/badge.svg)
+![npm package minimized gzipped size (scoped version select exports)](https://img.shields.io/bundlejs/size/%40kdevsoft/meta-injector)
 
 # ![meta injector logo](https://github.com/KonstantinKai/meta-injector/raw/main/assets/meta-injector.png)
 
@@ -185,7 +186,7 @@ function createService2(a: boolean): Service2 {
 const s1Meta = injector.createMeta<Service1, typeof Service1>('s1');
 const s2Meta = injector.createMeta<Service2, typeof createService2>('s2');
 
-injector.register(s1Meta, (...args) => new Service2(...args), FactoryType.Factory);
+injector.register(s1Meta, (...args) => new Service1(...args), FactoryType.Factory);
 injector.register(s2Meta, (...args) => createService2(...args), FactoryType.Factory);
 
 // Now you can create your services every time with necessary parameters. All parameters are strong typed
@@ -270,6 +271,21 @@ export const services = {
   service2: injector.createMeta<'str2'>(),
   service3: injector.createMeta<'str3'>(),
 } as const;
+```
+
+```ts
+// file: registration.ts
+import { services } from './services';
+
+(
+  [
+    [services.service1, 'str1'],
+    [services.service2, 'str2'],
+    [services.service3, 'str3'],
+  ] as const
+).forEach(([meta, value]) => {
+  injector.register(meta, () => value);
+});
 ```
 
 Retrieve services with the hook in `FunctionComponent`

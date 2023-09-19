@@ -6,7 +6,10 @@
     "di",
     "ioc",
     "service-locator",
-    "dependency-injection"
+    "dependency-injection",
+    "typescript",
+    "typescript-di",
+    "javascript-di"
   ],
   "description": "Lightweight, Typescript friendly, easy to use and understand service locator implementation for JavaScript and Node.js applications",
   "author": {

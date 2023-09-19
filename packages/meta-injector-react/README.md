@@ -26,6 +26,21 @@ export const services = {
 ```
 
 ```ts
+// file: registration.ts
+import { services } from './services';
+
+(
+  [
+    [services.service1, 'str1'],
+    [services.service2, 'str2'],
+    [services.service3, 'str3'],
+  ] as const
+).forEach(([meta, value]) => {
+  injector.register(meta, () => value);
+});
+```
+
+```ts
 // file: useInjector.ts
 import { createMetaInjectorHook } from '@kdevsoft/meta-injector-react';
 import { injector } from './injector';

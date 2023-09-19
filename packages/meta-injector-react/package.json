@@ -6,7 +6,8 @@
     "ioc",
     "service-locator",
     "dependency-injection",
-    "meta-injector-react-binding"
+    "meta-injector-react-binding",
+    "react"
   ],
   "description": "React binding for @kdevsoft/meta-injector",
   "author": {
